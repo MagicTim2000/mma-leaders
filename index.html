@@ -41,7 +41,8 @@
   #probe { position: fixed; visibility: hidden; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
   #app { position: fixed; top: env(safe-area-inset-top); bottom: env(safe-area-inset-bottom); left: 0; right: 0; width: 100%;
     height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom)); border: 0; background: transparent; opacity: 0; transition: opacity .2s; }
-  #app.ready { opacity: 1; }
+  #app.ready { opacity: 1; background: #3A6BAA; }
+  html.app body.loaded .splash { display: none; }
   #app.full { top: 0; bottom: 0; height: 100%; }
   body { min-height: 100vh; background: var(--sky); color: var(--navy); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     display: grid; place-items: center; padding: 24px 16px; }
@@ -83,7 +84,7 @@
   document.getElementById('open').href = APP;
   if (go) {
     var f = document.createElement('iframe'); f.id = 'app'; f.src = APP; f.title = 'MMA Leaders'; f.allow = 'clipboard-write; fullscreen';
-    f.onload = function () { f.className += ' ready'; };
+    f.onload = function () { if (!/ready/.test(f.className)) f.className += ' ready'; document.body.className += ' loaded'; };
     document.body.appendChild(f);
     var probe = document.createElement('div'); probe.id = 'probe'; document.body.appendChild(probe);
     // Send the notch and home-bar sizes to the leader view (it's nested inside Google's frames, so send to every frame).
@@ -93,8 +94,8 @@
     };
     // The leader view says hello once it's running: from then on it handles the screen edges itself, so fill the screen.
     window.addEventListener('message', function (e) {
-      if (!e.data || !e.data.mmaHello || !/^https:\/\/[a-z0-9-]+\.(script\.googleusercontent|script\.google)\.com$/.test(e.origin)) return;
-      f.className = 'full ready'; sendInsets();
+      if (!e.data || !e.data.mmaHello || !/^https:\/\/[a-z0-9-]+-script\.googleusercontent\.com$/.test(e.origin)) return;
+      f.className = 'full ready'; document.body.className += ' loaded'; sendInsets();
     });
     window.addEventListener('resize', function () { if (/full/.test(f.className)) sendInsets(); });
   }
