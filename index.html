@@ -37,7 +37,7 @@
   html.app .card { display: none; }
   .splash { display: none; }
   /* pinned to the exact middle of the screen on every phone and tablet, whatever the notch or home bar */
-  html.app .splash { display: block; position: fixed; top: 50%; left: 50%; width: min(140px, 36vw); height: auto;
+  html.app .splash { display: block; position: fixed; top: var(--cy, 50%); left: var(--cx, 50%); width: min(140px, 36vw); height: min(140px, 36vw);
     transform: translate(-50%, -50%); animation: pulse 1.4s ease-in-out infinite; }
   @keyframes pulse { 50% { transform: translate(-50%, -50%) scale(1.06); } }
   #probe { position: fixed; visibility: hidden; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
@@ -85,6 +85,22 @@
 <script>
   document.getElementById('open').href = APP;
   if (go) {
+    // Centre the logo on the real screen. A home-screen app can report the wrong height for a moment as it opens,
+    // so measure the screen itself, and check again as it settles and whenever it changes (rotating, for example).
+    var centreLogo = function () {
+      var root = document.documentElement.style;
+      if (!(window.navigator.standalone && window.screen && screen.width && screen.height)) { root.removeProperty('--cx'); root.removeProperty('--cy'); return; }   // in a browser, the page centres it itself
+      var portrait = window.matchMedia ? !matchMedia('(orientation: landscape)').matches : window.innerHeight >= window.innerWidth;
+      var w = portrait ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
+      var h = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+      root.setProperty('--cx', Math.round(w / 2) + 'px');
+      root.setProperty('--cy', Math.round(h / 2) + 'px');
+    };
+    centreLogo();
+    [50, 200, 500, 1000].forEach(function (ms) { setTimeout(centreLogo, ms); });
+    window.addEventListener('resize', centreLogo);
+    window.addEventListener('orientationchange', function () { setTimeout(centreLogo, 300); });
+    if (window.ResizeObserver) new ResizeObserver(centreLogo).observe(document.documentElement);
     var f = document.createElement('iframe'); f.id = 'app'; f.src = APP; f.title = 'MMA Leaders'; f.allow = 'clipboard-write; fullscreen';
     f.onload = function () { if (!/ready/.test(f.className)) f.className += ' ready'; document.body.className += ' loaded'; };
     document.body.appendChild(f);
