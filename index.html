@@ -93,8 +93,10 @@
       var portrait = window.matchMedia ? !matchMedia('(orientation: landscape)').matches : window.innerHeight >= window.innerWidth;
       var w = portrait ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
       var h = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+      // The page can start below the clock (its height is less than the screen's), so the middle of the screen is higher up in it.
+      const below = Math.max(0, h - window.innerHeight);
       root.setProperty('--cx', Math.round(w / 2) + 'px');
-      root.setProperty('--cy', Math.round(h / 2) + 'px');
+      root.setProperty('--cy', Math.round(h / 2 - below) + 'px');
     };
     centreLogo();
     [50, 200, 500, 1000].forEach(function (ms) { setTimeout(centreLogo, ms); });
