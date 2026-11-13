@@ -1,0 +1,12 @@
+{
+  "name": "MMA Leaders",
+  "short_name": "MMA Leaders",
+  "start_url": "./?go=1",
+  "display": "browser",
+  "background_color": "#3A6BAA",
+  "theme_color": "#3A6BAA",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
