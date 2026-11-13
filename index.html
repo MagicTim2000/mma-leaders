@@ -36,8 +36,10 @@
   html.app body { display: grid; place-items: center; padding: 0; }
   html.app .card { display: none; }
   .splash { display: none; }
-  html.app .splash { display: block; width: 140px; height: auto; animation: pulse 1.4s ease-in-out infinite; }
-  @keyframes pulse { 50% { transform: scale(1.06); } }
+  /* pinned to the exact middle of the screen on every phone and tablet, whatever the notch or home bar */
+  html.app .splash { display: block; position: fixed; top: 50%; left: 50%; width: min(140px, 36vw); height: auto;
+    transform: translate(-50%, -50%); animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 50% { transform: translate(-50%, -50%) scale(1.06); } }
   #probe { position: fixed; visibility: hidden; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
   #app { position: fixed; top: env(safe-area-inset-top); bottom: env(safe-area-inset-bottom); left: 0; right: 0; width: 100%;
     height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom)); border: 0; background: transparent; opacity: 0; transition: opacity .2s; }
