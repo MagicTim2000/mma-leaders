@@ -109,19 +109,22 @@
     var probe = document.createElement('div'); probe.id = 'probe'; document.body.appendChild(probe);
     // Send the notch and home-bar sizes to the leader view (it's nested inside Google's frames, so send to every frame).
     var sendInsets = function () {
-      var cs = getComputedStyle(probe), top = parseFloat(cs.paddingTop) || 0, bottom = parseFloat(cs.paddingBottom) || 0;
-      // Some iPhones report no notch for a moment (or at all) as a home-screen app opens. If the page reaches the very top
-      // of the screen, under the clock and battery, use that iPhone size's usual status-bar height instead.
+      var cs = getComputedStyle(probe), top = parseFloat(cs.paddingTop) || 0, bottom = parseFloat(cs.paddingBottom) || 0, saw = top + '/' + bottom;
+      // Some iPhones report no notch for a moment (or at all) as a home-screen app opens. As a home-screen app on an iPhone or iPad
+      // the page always runs under the clock and battery, so if it reads too small use that size's usual status-bar height instead.
+      // (Too much only makes the red header a little taller; too little hides the clock.)
       var iOS = /iP(hone|od|ad)/.test(navigator.platform) || (/Mac/.test(navigator.platform) && navigator.maxTouchPoints > 1);
       if (iOS && window.navigator.standalone && window.screen) {
         var portrait = !(window.matchMedia && matchMedia('(orientation: landscape)').matches);
         var sh = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
         var underClock = window.innerHeight >= sh - 2;
         var tablet = Math.min(screen.width, screen.height) >= 700;
-        if (underClock && top < 20) top = tablet ? 24 : !portrait ? 0 : sh >= 852 ? 59 : sh >= 812 ? 50 : 20;   // iPad / landscape phone (no bar) / Dynamic Island / notch / home button
+        if (top < 20) top = tablet ? 24 : !portrait ? 0 : sh >= 852 ? 59 : sh >= 812 ? 50 : 20;   // iPad / landscape phone (no bar) / Dynamic Island / notch / home button
         if (underClock && bottom < 1 && (tablet || sh >= 812)) bottom = tablet ? 20 : portrait ? 34 : 21;          // the home bar on devices without a home button
       }
-      var msg = { mmaInsets: { top: top, bottom: bottom } };
+      var info = 'screen ' + (window.screen ? screen.width + '×' + screen.height : '?') + ', page ' + window.innerWidth + '×' + window.innerHeight +
+        ', read ' + saw + ', using ' + top + '/' + bottom + (window.navigator.standalone ? ', home-screen app' : '') + ((navigator.userAgent.match(/OS (\d+[_\d]*)/) || [])[1] ? ', iOS ' + navigator.userAgent.match(/OS (\d+[_\d]*)/)[1].replace(/_/g, '.') : '');
+      var msg = { mmaInsets: { top: top, bottom: bottom, info: info } };
       (function post(w) { try { w.postMessage(msg, '*'); for (var i = 0; i < w.frames.length; i++) post(w.frames[i]); } catch (e) {} })(f.contentWindow);
     };
     // The leader view says hello once it's running: from then on it handles the screen edges itself, so fill the screen.
