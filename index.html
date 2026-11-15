@@ -120,7 +120,9 @@
     };
     // The leader view says hello once it's running: from then on it handles the screen edges itself, so fill the screen.
     window.addEventListener('message', function (e) {
-      if (!e.data || !e.data.mmaHello || !/^https:\/\/[a-z0-9-]+-script\.googleusercontent\.com$/.test(e.origin)) return;
+      if (!e.data || !/^https:\/\/[a-z0-9-]+-script\.googleusercontent\.com$/.test(e.origin)) return;
+      if (e.data.mmaReload) { location.reload(); return; }   // "Update now" in the leader view: load the newest version
+      if (!e.data.mmaHello) return;
       f.className = 'full ready'; if (!/loaded/.test(document.body.className)) document.body.className += ' loaded';
       // send now, and again as the phone settles (it can report the notch late)
       [0, 300, 1000, 2500].forEach(function (ms) { setTimeout(sendInsets, ms); });
