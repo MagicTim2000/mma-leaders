@@ -103,7 +103,7 @@
     window.addEventListener('resize', centreLogo);
     window.addEventListener('orientationchange', function () { setTimeout(centreLogo, 300); });
     if (window.ResizeObserver) new ResizeObserver(centreLogo).observe(document.documentElement);
-    var KEEP = ['mma_pass', 'mma_site'];
+    var KEEP = ['mma_pass', 'mma_site', 'mma_dev'];
     var keep = function (k, v) { if (KEEP.indexOf(k) === -1) return; try { if (v === null || v === '') localStorage.removeItem('kept_' + k); else if (typeof v === 'string' && v.length < 4000) localStorage.setItem('kept_' + k, v); } catch (err) {} };
     var kept = function () {
       var out = {}; KEEP.forEach(function (k) { try { var v = localStorage.getItem('kept_' + k); if (v) out[k] = v; } catch (err) {} });
@@ -131,7 +131,8 @@
       if (!e.data || !/^https:\/\/[a-z0-9-]+-script\.googleusercontent\.com$/.test(e.origin)) return;
       if (e.data.mmaReload) { location.reload(); return; }   // "Update now" in the leader view: load the newest version
       // iPhones wipe what the leader view saves inside this page when they close the app in the background, so this page keeps
-      // a copy of two things only: the sign-in (which ends at midnight, and Google checks it every time) and the location.
+      // a copy of three things only: the sign-in (which ends at midnight, and Google checks it every time), the location, and
+      // the phone's known-phone mark (so it can still sign in if someone is guessing PINs).
       if (e.data.mmaKeep) { keep(e.data.mmaKeep.k, e.data.mmaKeep.v); return; }
       if (e.data.mmaWantKept) { try { e.source.postMessage({ mmaKept: kept() }, e.origin); } catch (err) {} }   // only ever sent back to the leader view that asked
       if (!e.data.mmaHello) return;
