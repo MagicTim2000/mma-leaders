@@ -2,7 +2,7 @@
 
 A one-page launcher so leaders get a home-screen button with our logo, called "MMA Leaders".
 Google Apps Script pages can't set their own home-screen icon, so this page carries the icon and name
-and forwards straight on to the leader view (which still needs the leader PIN).
+and forwards straight on to the leader view (which still needs each leader's own PIN).
 
 - Live at https://leaders.magicacademy.com.au (GitHub Pages, public repo `MagicTim2000/mma-leaders`).
 - First visit from the shared link: shows the logo, an "Open the leader view" button and how to add it to the home screen.
